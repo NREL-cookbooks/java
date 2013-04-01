@@ -1,0 +1,4 @@
+# On development servers we'll assume we want faster startup times in exchange
+# for less optimized code:
+# https://github.com/jruby/jruby/wiki/Improving-startup-time#tiered-compilation-64-bit
+export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 $JAVA_OPTS"
