@@ -27,7 +27,7 @@ pkgs = value_for_platform(
     "default" => ["java-1.#{jdk_version}.0-openjdk","java-1.#{jdk_version}.0-openjdk-devel"]
   },
   ["debian","ubuntu"] => {
-    "default" => ["openjdk-#{jdk_version}-jdk","default-jre-headless"]
+    "default" => ["openjdk-#{jdk_version}-jdk"]
   },
   ["arch","freebsd"] => {
     "default" => ["openjdk#{jdk_version}"]
@@ -35,19 +35,21 @@ pkgs = value_for_platform(
   "default" => ["openjdk-#{jdk_version}-jdk"]
   )
 
-# done by special request for rberger
-ruby_block  "set-env-java-home" do
-  block do
-    ENV["JAVA_HOME"] = java_home
+if node['java']['set_java_home']
+  # done by special request for rberger
+  ruby_block  "set-env-java-home" do
+    block do
+      ENV["JAVA_HOME"] = java_home
+    end
+    not_if { ENV["JAVA_HOME"] == java_home }
   end
-  not_if { ENV["JAVA_HOME"] == java_home }
-end
 
-file "/etc/profile.d/jdk.sh" do
-  content <<-EOS
-    export JAVA_HOME=#{node['java']['java_home']}
-  EOS
-  mode 0755
+  file "/etc/profile.d/jdk.sh" do
+    content <<-EOS
+      export JAVA_HOME=#{node['java']['java_home']}
+    EOS
+    mode 0755
+  end
 end
 
 
